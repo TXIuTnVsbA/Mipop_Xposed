@@ -13,7 +13,7 @@
         android:value="true" />
     <meta-data
         android:name="xposeddescription"
-        android:value="中兴屏幕助手\nXposed移植版\nBy:Mr.Null\nGitHub:TXIuTnVsbA" />
+        android:value="屏幕助手\nBy:Mr.Null\nGitHub:TXIuTnVsbA" />
     <meta-data
         android:name="xposedminversion"
         android:value="30" />
