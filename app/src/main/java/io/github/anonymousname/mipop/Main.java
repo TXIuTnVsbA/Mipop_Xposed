@@ -31,10 +31,10 @@ public class Main implements IXposedHookLoadPackage,IXposedHookZygoteInit, IXpos
     public static int idRecent = 0;
     public static int idRecentSelector = 0;
     public static int idRecentPressed = 0;
-    private static final String appName="com.android.systemui";
-    private static final String packageName="com.android.systemui";
-    private static final String className="SystemUIApplication";
-    private static final String methodName="onCreate";
+    private static final String appName = "com.android.systemui";
+    private static final String packageName = "com.android.systemui.statusbar";
+    private static final String className = "SystemBars";
+    private static final String methodName = "start";
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
         //XposedBridge.log("initZygote");
@@ -68,26 +68,12 @@ public class Main implements IXposedHookLoadPackage,IXposedHookZygoteInit, IXpos
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
-                    XposedBridge.log("after_afterHookedMethod");
-                    Application application = (Application)param.thisObject;
-                    SharedPreferences sharedPreferences = application.getSharedPreferences("Mipop", 0);//创建一个文件用来储存app的开启状态
-                    long launchTime = sharedPreferences.getLong("launchTime", 0L);
-                    long now = System.currentTimeMillis();
-                    XposedBridge.log(String.valueOf(launchTime));
-                    XposedBridge.log(String.valueOf(now));
-                    XposedBridge.log(String.valueOf(now - launchTime));
-                    if(launchTime == 0L || now - launchTime > 60000){//60S
-                        XposedBridge.log("after_if");
-                        SharedPreferences.Editor edit = sharedPreferences.edit();//创建状态储存文件
-                        edit.putLong("launchTime",now);
-                        edit.apply();//保证文件的创建和编辑
-                        Context context = application.getApplicationContext();
-                        Until.initialPop(context);
-                        new MeterMenu(context);
-                        new MeterRecent(context);
-                        new MeterHome(context);
-                        new MeterBack(context);
-                    }
+                    Context context = (Context) XposedHelpers.getObjectField(param.thisObject, "mContext");
+                    Until.initialPop(context);
+                    new MeterMenu(context);
+                    new MeterRecent(context);
+                    new MeterHome(context);
+                    new MeterBack(context);
                 }
             });
         }
