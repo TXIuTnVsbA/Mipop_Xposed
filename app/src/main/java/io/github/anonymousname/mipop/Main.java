@@ -37,14 +37,14 @@ public class Main implements IXposedHookLoadPackage,IXposedHookZygoteInit, IXpos
     private static final String methodName="onCreate";
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
-        XposedBridge.log("initZygote");
+        //XposedBridge.log("initZygote");
         MODULE_PATH = startupParam.modulePath;//获取模块apk文件在储存中的位置
     }
 
     @Override
     public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam resparam) throws Throwable {
         if(resparam.packageName.equals(appName)){
-            XposedBridge.log("handleInitPackageResources");
+            //XposedBridge.log("handleInitPackageResources");
             XModuleResources modRes = XModuleResources.createInstance(MODULE_PATH, resparam.res);
             idBack = resparam.res.addResource(modRes, R.drawable.back);
             idBackPressed = resparam.res.addResource(modRes, R.drawable.back_pressed);
@@ -70,8 +70,8 @@ public class Main implements IXposedHookLoadPackage,IXposedHookZygoteInit, IXpos
                     super.afterHookedMethod(param);
                     XposedBridge.log("after_afterHookedMethod");
                     Application application = (Application)param.thisObject;
-                    SharedPreferences sharedPreferences = application.getSharedPreferences("Mipop", 0);//创建一个文件用来储存app的开启次数状态
-                    long launchTime = sharedPreferences.getLong("launchTime", 0L);//这个文件里面的布尔常量名，和它的初始状态，状态为是，则触发下面的方法
+                    SharedPreferences sharedPreferences = application.getSharedPreferences("Mipop", 0);//创建一个文件用来储存app的开启状态
+                    long launchTime = sharedPreferences.getLong("launchTime", 0L);
                     long now = System.currentTimeMillis();
                     XposedBridge.log(String.valueOf(launchTime));
                     XposedBridge.log(String.valueOf(now));
