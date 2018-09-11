@@ -32,7 +32,7 @@ public class Main implements IXposedHookLoadPackage,IXposedHookZygoteInit, IXpos
     public static int idRecentSelector = 0;
     public static int idRecentPressed = 0;
     private static final String appName = "com.android.systemui";
-    private static final String packageName = "com.android.systemui.statusbar";
+    private static final String packageName = "com.android.systemui";
     private static final String className = "SystemBars";
     private static final String methodName = "start";
     @Override
@@ -63,7 +63,12 @@ public class Main implements IXposedHookLoadPackage,IXposedHookZygoteInit, IXpos
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if(lpparam.packageName.equals(appName)){
-            final Class clazz =lpparam.classLoader.loadClass(packageName+"."+className);
+            Class clazz = null;
+            clazz = XposedHelpers.findClassIfExists(packageName + "." + className,lpparam.classLoader);
+            if(clazz == null){
+                clazz = XposedHelpers.findClassIfExists(packageName + ".statusbar." + className,lpparam.classLoader);
+            }
+//            final Class clazz = lpparam.classLoader.loadClass(packageName + "." + className);
             XposedHelpers.findAndHookMethod(clazz, methodName,new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
